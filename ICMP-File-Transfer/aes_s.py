@@ -66,7 +66,8 @@ def parsing(host):
                     print(f"Receiving data... {receive_bytes}")
                     if icmp_payloads == b"EOF":
                         print("Finished !!!")
-                        sock.ioctl(SIO_RCVALL, RCVALL_OFF)
+                        if os.name == "nt":
+                            sock.ioctl(SIO_RCVALL, RCVALL_OFF)
                         break
                     with open(file_path, "ab") as f:
                         f.write(icmp_payloads)
@@ -76,7 +77,6 @@ def parsing(host):
         if os.name == "nt":
             sock.ioctl(SIO_RCVALL, RCVALL_OFF)
 
-
 if __name__ == "__main__":
     host = ip.myip  # 자신의 IP 주소로 변경
     print("START SNIFFING at [%s]" % host)
@@ -85,6 +85,7 @@ if __name__ == "__main__":
     enc = b""
     with open("./enc.png", "rb") as f:
         while True:
+
             line = f.readline()
             if not line: break
             enc = enc + line
@@ -92,3 +93,4 @@ if __name__ == "__main__":
     with open("./recv_logo.png", "wb") as f:
         f.write(AEScipher().decrypt(enc))
     f.close()
+    print("CREATE recv_log.png")
