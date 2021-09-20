@@ -3,13 +3,19 @@ import os
 import struct
 import ip
 
+#ip header + icmp header + message
+#ip header : 20byte
+#icmp header : 8byte 
+
 def parse_ip_header(ip_header):
+    # BBHHHBBH4s4s : 1+1+2+2+2+1+1+2+4+4 = 20byte
     ip_headers = struct.unpack("!BBHHHBBH4s4s", ip_header[:20])
     ip_payloads = ip_header[20:]
     return ip_headers, ip_payloads
 
 
 def parse_icmp_header(icmp_data):
+    # BBHHH : 1+1+2+2+2 = 8byte
     icmp_headers = struct.unpack("!BBHHH", icmp_data[:8])
     icmp_payloads = icmp_data[8:]
     return icmp_headers, icmp_payloads
@@ -25,6 +31,8 @@ def parsing(host):
     sock.bind((host, 0))
 
     # socket 옵션
+    # 사용자가 header에 접근 허용
+    # header도 같이 sniffing
     sock.setsockopt(IPPROTO_IP, IP_HDRINCL, 1)
 
     # promiscuous mode 켜기
@@ -33,8 +41,11 @@ def parsing(host):
 
     try:
         while True:
+            # ip datagram : ip header + payload (max : 65536 byte)
             data = sock.recvfrom(65535)
+            # recvfrom 반환 값 (bytes, address) = (수신한 데이터, 데이터 송신 socket 주소)
             ip_headers, ip_payloads = parse_ip_header(data[0])
+            # icmp :1 / tcp : 6 / udp : 17
             if ip_headers[6] == 1:  # ICMP Only
                 ip_source_address = inet_ntoa(ip_headers[8])
                 ip_destination_address = inet_ntoa(ip_headers[9])
