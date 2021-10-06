@@ -7,15 +7,16 @@ session = requests.session()
 
 params = dict()
 params['mb_id'] = 'admin'
-params['mb_password'] = 'qwer1234'
+params['mb_password'] = 'aaaeae'
 res = session.post(login_url, data=params)
+print(res.text)
 
-res = session.get("http://192.168.10.4/gnu/bbs/board.php?bo_table=free")
+# res = session.get("http://192.168.10.4/gnu/bbs/board.php?bo_table=free")
+# print(res.text)
+# soup = BeautifulSoup(res.content,"html.parser")
 
-soup = BeautifulSoup(res.content,"html.parser")
-
-result = soup.find_all("b", class_="sound_only")
+# result = soup.find_all("b", class_="sound_only")
 
 
-for x in result:
-    print(x.get_text())
+# for x in result:
+#     print(x.get_text())
